@@ -138,7 +138,7 @@ async def evaluate_jobs(request: Request):
     # ── Gemini API呼び出し ──
     gemini_url = (
         "https://generativelanguage.googleapis.com/v1beta/models/"
-        "gemini-1.5-flash:generateContent?key=" + api_key
+        "gemini-2.5-flash-lite:generateContent?key=" + api_key
     )
 
     gemini_payload = {
