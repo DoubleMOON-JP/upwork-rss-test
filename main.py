@@ -183,24 +183,19 @@ async def evaluate_jobs(request: Request):
                 "raw":     str(gemini_data)[:300],
             })
 
-        # JSONブロックを抽出（複数パターンに対応）
+        # JSONブロックを抽出（正規表現で確実に抽出）
+        import re
         clean_text = raw_text.strip()
-        if "```json" in clean_text:
-            # パターン1: ```json ... ```
-            clean_text = clean_text.split("```json")[1].split("```")[0]
-        elif "```" in clean_text:
-            # パターン2: ``` ... ```
-            parts = clean_text.split("```")
-            if len(parts) >= 2:
-                clean_text = parts[1]
-                if clean_text.startswith("json"):
-                    clean_text = clean_text[4:]
+
+        # まず { から } までを正規表現で直接抽出（最も確実）
+        json_match = re.search(r'\{.*\}', clean_text, re.DOTALL)
+        if json_match:
+            clean_text = json_match.group(0)
         else:
-            # パターン3: テキスト中の { ... } を抽出
-            start = clean_text.find("{")
-            end   = clean_text.rfind("}") + 1
-            if start != -1 and end > start:
-                clean_text = clean_text[start:end]
+            # フォールバック：```で囲まれた部分を取得
+            code_match = re.search(r'```(?:json)?\s*(.*?)\s*```', clean_text, re.DOTALL)
+            if code_match:
+                clean_text = code_match.group(1)
         clean_text = clean_text.strip()
 
         # JSONパース
