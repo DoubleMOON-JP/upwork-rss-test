@@ -144,8 +144,9 @@ async def evaluate_jobs(request: Request):
     gemini_payload = {
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {
-            "temperature":     0.3,
-            "maxOutputTokens": 1000,
+            "temperature":        0.3,
+            "maxOutputTokens":    1000,
+            "responseMimeType":   "application/json",
         }
     }
 
