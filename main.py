@@ -201,11 +201,13 @@ async def evaluate_jobs(request: Request):
         # JSONパース
         try:
             ai_result = json.loads(clean_text)
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as je:
             return JSONResponse(status_code=502, content={
-                "status":   "json_parse_error",
-                "message":  "AIレスポンスのJSON変換に失敗",
-                "raw_text": raw_text[:500],
+                "status":        "json_parse_error",
+                "message":       "AIレスポンスのJSON変換に失敗",
+                "parse_error":   str(je),
+                "clean_text":    clean_text[:300],
+                "raw_text_repr": repr(raw_text[:200]),
             })
 
         # 元の案件データとスコアを結合
