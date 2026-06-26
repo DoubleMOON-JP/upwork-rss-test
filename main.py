@@ -183,20 +183,17 @@ async def evaluate_jobs(request: Request):
                 "raw":     str(gemini_data)[:300],
             })
 
-        # JSONブロックを抽出（正規表現で確実に抽出）
+        # JSONブロックを抽出
         import re
         clean_text = raw_text.strip()
 
-        # まず { から } までを正規表現で直接抽出（最も確実）
-        json_match = re.search(r'\{.*\}', clean_text, re.DOTALL)
+        # { で始まり } で終わる部分を直接抽出
+        # ※ re.DOTALLで改行も含めてマッチ
+        json_match = re.search(r'(\{[\s\S]*\})', clean_text)
         if json_match:
-            clean_text = json_match.group(0)
+            clean_text = json_match.group(1).strip()
         else:
-            # フォールバック：```で囲まれた部分を取得
-            code_match = re.search(r'```(?:json)?\s*(.*?)\s*```', clean_text, re.DOTALL)
-            if code_match:
-                clean_text = code_match.group(1)
-        clean_text = clean_text.strip()
+            clean_text = clean_text.strip()
 
         # JSONパース
         try:
