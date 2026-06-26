@@ -145,7 +145,7 @@ async def evaluate_jobs(request: Request):
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {
             "temperature":        0.3,
-            "maxOutputTokens":    1000,
+            "maxOutputTokens":    4096,
             "responseMimeType":   "application/json",
         }
     }
